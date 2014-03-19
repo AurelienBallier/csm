@@ -21,7 +21,9 @@ int icp_loop(struct sm_params*params, const double*q0, double*x_new,
 	LDP laser_sens = params->laser_sens;
 	double x_old[3], delta[3], delta_old[3] = {0,0,0};
 	copy_d(q0, 3, x_old);
-	unsigned int hashes[params->max_iterations];
+
+    DYNAMIC_ALLOCATE(unsigned int, hashes, params->max_iterations);
+
 	int iteration;
 	
 	sm_debug("icp: starting at  q0 =  %s  \n", friendly_pose(x_old));
@@ -158,6 +160,8 @@ int icp_loop(struct sm_params*params, const double*q0, double*x_new,
 	if(JJ) jj_loop_exit();
 	
 	*iterations = iteration+1;
+
+    CLEAN_MEMORY(hashes);
 	
 	return all_is_okay;
 }
@@ -173,8 +177,8 @@ int compute_next_estimate(struct sm_params*params,
 {
 	LDP laser_ref  = params->laser_ref;
 	LDP laser_sens = params->laser_sens;
-	
-	struct gpc_corr c[laser_sens->nrays];
+
+    DYNAMIC_ALLOCATE(struct gpc_corr, c, laser_sens->nrays);
 
 	int i; int k=0;
 	for(i=0;i<laser_sens->nrays;i++) {
@@ -188,8 +192,12 @@ int compute_next_estimate(struct sm_params*params,
 		int j2 = laser_sens->corr[i].j2;
 
 		c[k].valid = 1;
-		
-		if(laser_sens->corr[i].type == corr_pl) {
+
+#ifdef __cplusplus
+            if(laser_sens->corr[i].type == correspondence::corr_pl) {
+#else
+		    if(laser_sens->corr[i].type == corr_pl) {
+#endif
 
 			c[k].p[0] = laser_sens->points[i].p[0];
 			c[k].p[1] = laser_sens->points[i].p[1];
@@ -330,6 +338,8 @@ int compute_next_estimate(struct sm_params*params,
 	if(new_error > old_error + epsilon) {
 		sm_error("\tcompute_next_estimate: something's fishy here! Old error: %lf  new error: %lf  x_old %lf %lf %lf x_new %lf %lf %lf\n",old_error,new_error,x_old[0],x_old[1],x_old[2],x_new[0],x_new[1],x_new[2]);
 	}
+
+    CLEAN_MEMORY(c);
 	
 	return 1;
 }

@@ -23,12 +23,6 @@
 #define MbICP
 #include "TData.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
 // ----------------------------------------------------------------------------
 // GLOBAL FUNCTIONS
 // ----------------------------------------------------------------------------
@@ -116,7 +110,7 @@ extern "C" {
 
 
 
-void Init_MbICP_ScanMatching(
+CSM_LIB_DECL void Init_MbICP_ScanMatching(
 			     float max_laser_range,
 			     float Bw,
 			     float Br,
@@ -153,11 +147,7 @@ void Init_MbICP_ScanMatching(
 //		-1: Failure in the association step
 //		-2: Failure in the minimization step
 
-int MbICPmatcher(Tpfp *laserK, Tpfp *laserK1,
+CSM_LIB_DECL int MbICPmatcher(Tpfp *laserK, Tpfp *laserK1,
 				 Tsc *sensorMotion, Tsc *solution);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

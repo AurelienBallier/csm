@@ -11,7 +11,7 @@ struct sm3_params {
 } p;
 extern void sm_options(struct sm_params*p, struct option*ops);
 
-extern int distance_counter;
+int distance_counter;
 
 
 int main(int argc, const char*argv[]) {

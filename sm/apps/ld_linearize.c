@@ -46,7 +46,7 @@ void ld_linearize(LDP ld) {
 		if(-1 == ld->cluster[i]) continue;
 		
 		int this_cluster = ld->cluster[i];
-		int indexes[ld->nrays];
+        DYNAMIC_ALLOCATE(int, indexes, ld->nrays);
 		int nindexes = 0;
 		
 		int j;
@@ -54,8 +54,8 @@ void ld_linearize(LDP ld) {
 			if(ld->cluster[j]==this_cluster) 
 				indexes[nindexes++] = j;
 		
-		double alpha[nindexes];
-		double alpha_weight[nindexes];
+        DYNAMIC_ALLOCATE(double, alpha, nindexes);
+        DYNAMIC_ALLOCATE(double, alpha_weight, nindexes);
 		for(j=0;j<nindexes;j++) { 
 			alpha[j] = ld->alpha[indexes[j]];
 			alpha_weight[j] = 1 / ld->cov_alpha[indexes[j]];
@@ -63,8 +63,8 @@ void ld_linearize(LDP ld) {
 	
 		double est_alpha = weighted_mean(alpha, alpha_weight, nindexes);
 	
-		double rho[nindexes];
-		double rho_weight[nindexes];
+        DYNAMIC_ALLOCATE(double, rho, nindexes);
+        DYNAMIC_ALLOCATE(double, rho_weight, nindexes);
 		for(j=0;j<nindexes;j++) { 
 			int i = indexes[j];
 			double theta = ld->theta[i];
@@ -85,6 +85,12 @@ void ld_linearize(LDP ld) {
 		}
 	
 		i = indexes[nindexes-1];
+
+        CLEAN_MEMORY(rho_weight);
+        CLEAN_MEMORY(rho);
+        CLEAN_MEMORY(alpha_weight);
+        CLEAN_MEMORY(alpha);
+        CLEAN_MEMORY(indexes);
 	}
 	
 }

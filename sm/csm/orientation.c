@@ -21,7 +21,7 @@ void ld_compute_orientation(LDP ld, int size_neighbourhood, double sigma) {
 			continue;
 		}
 		
-		int neighbours[size_neighbourhood*2];
+        DYNAMIC_ALLOCATE(int, neighbours, size_neighbourhood*2);
 		size_t num_neighbours;
 		find_neighbours(ld, i, size_neighbourhood, neighbours, &num_neighbours);
 
@@ -33,8 +33,8 @@ void ld_compute_orientation(LDP ld, int size_neighbourhood, double sigma) {
 		}
 
 /*		printf("orientation for i=%d:\n",i); */
-		double thetas[num_neighbours];
-		double readings[num_neighbours];
+        DYNAMIC_ALLOCATE(double, thetas, num_neighbours);
+        DYNAMIC_ALLOCATE(double, readings, num_neighbours);
 		size_t a=0; 
 		for(a=0;a<num_neighbours;a++) {
 			thetas[a] = ld->theta[neighbours[a]];
@@ -56,6 +56,10 @@ void ld_compute_orientation(LDP ld, int size_neighbourhood, double sigma) {
 			ld->alpha_valid[i] = 1;
 		}
 		/* printf("---------- i = %d alpha = %f sigma=%f cov_alpha = %f\n", i, alpha, ld->cov_alpha[i]);*/
+        
+        CLEAN_MEMORY(readings);
+        CLEAN_MEMORY(thetas);
+        CLEAN_MEMORY(neighbours);
 	}
 }
 

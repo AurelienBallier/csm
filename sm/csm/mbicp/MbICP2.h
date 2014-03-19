@@ -23,10 +23,6 @@
 
 #include "TData.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 // ************************
 // Scan inner matching parameters
@@ -109,30 +105,26 @@ typedef struct{
 
 // ************************
 // Static structure to initialize the SM parameters
-extern TSMparams params;
+CSM_LIB_DECL TSMparams params;
 
 // Original points to be aligned
-extern Tscan ptosRef;
-extern Tscan ptosNew;
+CSM_LIB_DECL Tscan ptosRef;
+CSM_LIB_DECL Tscan ptosNew;
 
 // At each step::
 
 // Those points removed by the projection filter (see Lu&Millios -- IDC)
-extern Tscan ptosNoView; // Only with ProjectionFilter=1;
+CSM_LIB_DECL Tscan ptosNoView; // Only with ProjectionFilter=1;
 
 // Structure of the associations before filtering
-extern TAsoc cp_associations[MAXLASERPOINTS];
-extern int cntAssociationsT;
+CSM_LIB_DECL TAsoc cp_associations[MAXLASERPOINTS];
+CSM_LIB_DECL int cntAssociationsT;
 
 // Filtered Associations
-extern TAsoc cp_associationsTemp[MAXLASERPOINTS];
-extern int cntAssociationsTemp;
+CSM_LIB_DECL TAsoc cp_associationsTemp[MAXLASERPOINTS];
+CSM_LIB_DECL int cntAssociationsTemp;
 
 // Current motion estimation
-extern Tsc motion2;
-
-#ifdef __cplusplus
-}
-#endif
+CSM_LIB_DECL Tsc motion2;
 
 #endif

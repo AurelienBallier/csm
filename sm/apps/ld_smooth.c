@@ -70,7 +70,7 @@ void convolve(const int*valid,const double*original, int n, double*dest, double*
 
 void ld_smooth(LDP ld, int neighbours, double scale_rad) {
 	int len = neighbours + 1;
-	double filter[len];
+    DYNAMIC_ALLOCATE(double, filter, len);
 	int j;
 	static int once = 1;
 	for(j=0;j<len;j++) {
@@ -91,13 +91,16 @@ void ld_smooth(LDP ld, int neighbours, double scale_rad) {
 	/* and normalize */
 	for(j=0;j<len;j++) filter[j]/=filter_tot;
 
-	double new_readings[ld->nrays];
+    DYNAMIC_ALLOCATE(double, new_readings, ld->nrays);
 	convolve(ld->valid, ld->readings, ld->nrays, new_readings, filter, len);
 	copy_d(new_readings, ld->nrays,  ld->readings);
 
 	for(j=0;j<len;j++) {
 		
 	}
+
+    CLEAN_MEMORY(new_readings);
+    CLEAN_MEMORY(filter);
 }
 
 

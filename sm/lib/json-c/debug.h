@@ -12,13 +12,15 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-extern void mc_set_debug(int debug);
-extern int mc_get_debug(void);
+#include "../../csm/restrict.h"
 
-extern void mc_set_syslog(int syslog);
-extern void mc_abort(const char *msg, ...);
-extern void mc_debug(const char *msg, ...);
-extern void mc_error(const char *msg, ...);
-extern void mc_info(const char *msg, ...);
+CSM_LIB_DECL void mc_set_debug(int debug);
+CSM_LIB_DECL int mc_get_debug(void);
+
+CSM_LIB_DECL void mc_set_syslog(int syslog);
+CSM_LIB_DECL void mc_abort(const char *msg, ...);
+CSM_LIB_DECL void mc_debug(const char *msg, ...);
+CSM_LIB_DECL void mc_error(const char *msg, ...);
+CSM_LIB_DECL void mc_info(const char *msg, ...);
 
 #endif

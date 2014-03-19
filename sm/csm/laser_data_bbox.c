@@ -32,9 +32,9 @@ bbfind * bbfind_new(void);
 /* -------------------------------------- */
 
 bbfind * bbfind_new() {
-	bbfind * bbf = malloc(sizeof(bbfind));
+	bbfind *bbf = (bbfind*)malloc(sizeof(bbfind));
 	bbf->buf_size = 1000;
-	bbf->buf = malloc(sizeof(BB_Point)*bbf->buf_size);
+	bbf->buf = (BB_Point*)malloc(sizeof(BB_Point)*bbf->buf_size);
 	bbf->num = 0;
 	return bbf;
 }

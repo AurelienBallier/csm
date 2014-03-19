@@ -14,13 +14,19 @@ SET(json-c_sources
 	json_more_utils.c
 )
 
+SET(json_linker_flags "")
+if(MSVC)
+SET_SOURCE_FILES_PROPERTIES(${json-c_sources} test2.c PROPERTIES LANGUAGE CXX)
+SET(json_linker_flags csm)
+endif(MSVC)
+
 ADD_LIBRARY(json-c STATIC ${json-c_sources})
 
 #ADD_EXECUTABLE(test1 test1.c)
 ADD_EXECUTABLE(test2 test2.c)
 
 #TARGET_LINK_LIBRARIES(test1 json-c)
-TARGET_LINK_LIBRARIES(test2 json-c)
+TARGET_LINK_LIBRARIES(test2 json-c ${json_linker_flags})
 
 
 FILE(GLOB json_headers "*.h")

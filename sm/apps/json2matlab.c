@@ -61,12 +61,20 @@ int main(int argc, const char * argv[]) {
 	if(argc == 2 && (argv[1][0] != '-')) { 
 		/* one parameter */
 		input_filename = argv[1]; int len = strlen(input_filename) + 4;
-		char base[len], no_suffix[len], out[len];
+
+        DYNAMIC_ALLOCATE(char, base, len);
+        DYNAMIC_ALLOCATE(char, no_suffix, len);
+        DYNAMIC_ALLOCATE(char, out, len);
+
 		my_no_suffix(input_filename, no_suffix);
 		sprintf(out, "%s.m", no_suffix);
 		my_basename_no_suffix(input_filename, base);
 		out_filename = my_strdup(out);
 		function = my_strdup(base);
+
+        CLEAN_MEMORY(out);
+        CLEAN_MEMORY(no_suffix);
+        CLEAN_MEMORY(base);
 	} else if(argc == 3 && (argv[1][0] != '-') && (argv[2][0] != '-')) { 
 		input_filename = argv[1]; 
 		out_filename = argv[2];
@@ -80,9 +88,10 @@ int main(int argc, const char * argv[]) {
 
 	if(!strcmp(function,"")) {
 		int len = strlen(out_filename) + 4;
-		char base[len];
+        DYNAMIC_ALLOCATE(char, base, len);
 		my_basename_no_suffix(out_filename, base);
-		function = my_strdup(base);				
+		function = my_strdup(base);
+        CLEAN_MEMORY(base);		
 	}
 	
 	

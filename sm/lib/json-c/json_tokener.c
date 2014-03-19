@@ -15,7 +15,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#ifndef _WIN32
 #include <strings.h>
+#else
+#include "../../csm/restrict.h"
+#endif
 
 #include "bits.h"
 #include "debug.h"
@@ -57,7 +61,7 @@ const char* json_tokener_errors[] = {
 
 struct json_tokener* json_tokener_new()
 {
-  struct json_tokener *tok = calloc(1, sizeof(struct json_tokener));
+  struct json_tokener *tok = (struct json_tokener *)calloc(1, sizeof(struct json_tokener));
   tok->pb = printbuf_new();
   json_tokener_reset(tok);
   return tok;
@@ -97,7 +101,7 @@ struct json_object* json_tokener_parse(const char *str)
   tok = json_tokener_new();
   obj = json_tokener_parse_ex(tok, str, -1);
   if(tok->err != json_tokener_success)
-    obj = error_ptr(-tok->err);
+    obj = (struct json_object*)error_ptr(-tok->err);
   json_tokener_free(tok);
   return obj;
 }

@@ -168,7 +168,8 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 	hsm_circular_cross_corr_stupid(b1->num_angular_cells, b2->hs, b1->hs, b1->hs_cross_corr);
 
 	/* Find peaks in cross-correlation */
-	int peaks[p->num_angular_hypotheses], npeaks;
+    DYNAMIC_ALLOCATE(int, peaks, p->num_angular_hypotheses);
+	int npeaks;
 	hsm_find_peaks_circ(b1->num_angular_cells, b1->hs_cross_corr, p->angular_hyp_min_distance_deg, 0, p->num_angular_hypotheses, peaks, &npeaks);
 
 	sm_debug("Found %d peaks (max %d) in cross correlation.\n", npeaks, p->num_angular_hypotheses);
@@ -188,12 +189,13 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 		sm_debug("Theta hyp#%d: lag %d, angle %fdeg\n", np, lag, rad2deg(theta_hypothesis));
 
 		/* Superimpose the two spectra */
-		double mult[b1->num_angular_cells];
+        DYNAMIC_ALLOCATE(double, mult, b1->num_angular_cells);
 		for(int r=0;r<b1->num_angular_cells;r++)
 			mult[r] = b1->hs[r] * b2->hs[pos_mod(r-lag, b1->num_angular_cells)];
 
 		/* Find directions where both are intense */
-		int directions[p->xc_ndirections], ndirections;
+        DYNAMIC_ALLOCATE(int, directions, p->xc_ndirections);
+		int ndirections;
 		hsm_find_peaks_circ(b1->num_angular_cells, b1->hs_cross_corr, p->xc_directions_min_distance_deg, 1, p->xc_ndirections, directions, &ndirections);
 
 		if(ndirections<2) {
@@ -203,17 +205,17 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 		#define MAX_NPEAKS 1024
 		assert(p->linear_xc_max_npeaks<MAX_NPEAKS);
 
-		struct {
+		typedef struct dir{
 			/* Direction of cross correlation */
 			double angle;
 			int nhypotheses;
-			struct {
+			typedef struct hypothese{
 				double delta;
 				double value;
-			// } hypotheses[p->linear_xc_max_npeaks];
-			} hypotheses[MAX_NPEAKS];
-		} dirs[ndirections];
-
+			} Hypothese;
+            Hypothese hypotheses[MAX_NPEAKS];
+		} Dir;
+        DYNAMIC_ALLOCATE(Dir, dirs, ndirections);
 
 		sm_debug("Using %d (max %d) correlations directions.\n", ndirections, p->xc_ndirections);
 
@@ -231,8 +233,8 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 			printf(" cd %d angle = %d deg\n", cd, (int) rad2deg(dirs[cd].angle));
 
 			/* Do correlation */
-			int    lags  [2*max_lag + 1];
-			double xcorr [2*max_lag + 1];
+            DYNAMIC_ALLOCATE(int, lags, 2*max_lag + 1);
+            DYNAMIC_ALLOCATE(double, xcorr, 2*max_lag + 1);
 
 			int i1 = pos_mod(directions[cd]        , b1->num_angular_cells);
 			int i2 = pos_mod(directions[cd] + lag  , b1->num_angular_cells);
@@ -245,7 +247,8 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 				xcorr, lags, min_lag, max_lag);
 
 			/* Find peaks of cross-correlation */
-			int linear_peaks[p->linear_xc_max_npeaks], linear_npeaks;
+            DYNAMIC_ALLOCATE(int, linear_peaks, p->linear_xc_max_npeaks);
+			int linear_npeaks;
 
 			hsm_find_peaks_linear(
 				2*max_lag + 1, xcorr, p->linear_xc_peaks_min_distance/b1->linear_cell_size,
@@ -272,11 +275,15 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 				sm_debug("true_x    delta = %f \n", true_delta );
 			}
 
+            CLEAN_MEMORY(lags);
+            CLEAN_MEMORY(xcorr);
+            CLEAN_MEMORY(linear_peaks);
+
 		} /* xc direction */
 		sm_log_pop();
 
 		sm_debug("Now doing all combinations. How many are there?\n");
-		int possible_choices[ndirections];
+        DYNAMIC_ALLOCATE(int, possible_choices, ndirections);
 		int num_combinations = 1;
 		for(int cd=0;cd<ndirections;cd++) {
 			possible_choices[cd] = dirs[cd].nhypotheses;
@@ -285,7 +292,7 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 		sm_debug("Total: %d combinations\n", num_combinations);
 		sm_log_push("For each combination..");
 		for(int comb=0;comb<num_combinations;comb++) {
-			int choices[ndirections];
+            DYNAMIC_ALLOCATE(int, choices, ndirections);
 			hsm_generate_combinations(ndirections, possible_choices, comb, choices);
 
 			/* Linear least squares */
@@ -327,9 +334,15 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 			b1->results[k][2] = theta_hypothesis;
 			b1->results_quality[k] = sum_values;
 			b1->num_valid_results++;
+
+            CLEAN_MEMORY(choices);
 		}
 		sm_log_pop();
-
+        
+        CLEAN_MEMORY(possible_choices);
+        CLEAN_MEMORY(dirs);
+        CLEAN_MEMORY(directions);
+        CLEAN_MEMORY(mult);
 	} /* theta hypothesis */
 	sm_log_pop();
 
@@ -343,15 +356,15 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 
 
 	/* Sorting based on values */
-	int indexes[b1->num_valid_results];
+    DYNAMIC_ALLOCATE(int, indexes, b1->num_valid_results);
 	for(int i=0;i<b1->num_valid_results;i++)
 		indexes[i] = i;
 
 	qsort_descending(indexes, (size_t) b1->num_valid_results, b1->results_quality);
 
 	/* copy in the correct order*/
-	double*results_tmp[b1->num_valid_results];
-	double results_quality_tmp[b1->num_valid_results];
+    DYNAMIC_ALLOCATE(double*, results_tmp, b1->num_valid_results);
+    DYNAMIC_ALLOCATE(double, results_quality_tmp, b1->num_valid_results);
 	for(int i=0;i<b1->num_valid_results;i++) {
 		results_tmp[i] = b1->results[i];
 		results_quality_tmp[i] = b1->results_quality[i];
@@ -386,6 +399,11 @@ void hsm_match(struct hsm_params*p, hsm_buffer b1, hsm_buffer b2) {
 	sm_debug("Time: %f sec (%d ticks)\n", ctime, ticks);
 	
 	sm_log_pop();
+    
+    CLEAN_MEMORY(results_quality_tmp);
+    CLEAN_MEMORY(results_tmp);
+    CLEAN_MEMORY(indexes);
+    CLEAN_MEMORY(peaks);
 }
 
 
@@ -406,7 +424,8 @@ void hsm_find_peaks_circ(int n, const double*f, double min_angle_deg, int unidir
 	assert(max_peaks>0);
 
 	/* Find all local maxima for the function */
-	int maxima[n], nmaxima;
+    DYNAMIC_ALLOCATE(int, maxima, n);
+	int nmaxima;
 	hsm_find_local_maxima_circ(n, f, maxima, &nmaxima);
 
 	sm_debug("Found %d of %d are local maxima.\n", nmaxima, n);
@@ -454,6 +473,8 @@ void hsm_find_peaks_circ(int n, const double*f, double min_angle_deg, int unidir
 
 	sm_debug("found %d (max %d) maxima.\n", *npeaks, max_peaks);
 	sm_log_pop();
+
+    CLEAN_MEMORY(maxima);
 }
 
 
@@ -465,7 +486,8 @@ void hsm_find_peaks_linear(int n, const double*f, double min_dist, int max_peaks
 	assert(max_peaks>0);
 
 	/* Find all local maxima for the function */
-	int maxima[n], nmaxima;
+    DYNAMIC_ALLOCATE(int, maxima, n);
+	int nmaxima;
 	hsm_find_local_maxima_linear(n,f,maxima,&nmaxima);
 
 	sm_debug("Found %d of %d are local maxima.\n", nmaxima, n);
@@ -499,10 +521,12 @@ void hsm_find_peaks_linear(int n, const double*f, double min_dist, int max_peaks
 
 		if(*npeaks >= max_peaks) break;
 	}
-	sm_log_pop("");
+	sm_log_pop();
 	sm_debug("Found %d (max %d) maxima.\n", *npeaks, max_peaks);
 
 	sm_log_pop();
+
+    CLEAN_MEMORY(maxima);
 }
 
 
@@ -538,13 +562,15 @@ void hsm_find_local_maxima_linear(int n, const double*f, int*maxima, int*nmaxima
 
 void hsm_circular_cross_corr_stupid(int n, const double *a, const double *b, double*res) {
 	/* Two copies of f1 */
-	double aa[2*n];
+    DYNAMIC_ALLOCATE(double, aa, 2*n);
 	for(int i=0;i<2*n;i++) aa[i] = a[i%n];
 	for(int lag=0;lag<n;lag++) {
 		res[lag] = 0;
 		for(int j=0;j<n;j++)
 			res[lag] += b[j] * aa[j+lag];
 	}
+    
+    CLEAN_MEMORY(aa);
 }
 
 
@@ -591,6 +617,3 @@ void qsort_descending(int *indexes, size_t nmemb, const double*values)
 int pos_mod(int a, int b) {
 	return ((a%b)+b)%b;
 }
-
-
-

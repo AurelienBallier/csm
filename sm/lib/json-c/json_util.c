@@ -61,11 +61,11 @@ struct json_object* json_object_from_file(char *filename)
   if((fd = open(filename, O_RDONLY)) < 0) {
     mc_error("json_object_from_file: error reading file %s: %s\n",
 	     filename, strerror(errno));
-    return error_ptr(-1);
+    return (struct json_object*)error_ptr(-1);
   }
   if(!(pb = printbuf_new())) {
     mc_error("json_object_from_file: printbuf_new failed\n");
-    return error_ptr(-1);
+    return (struct json_object*)error_ptr(-1);
   }
   while((ret = read(fd, buf, JSON_FILE_BUF_SIZE)) > 0) {
     printbuf_memappend(pb, buf, ret);
@@ -75,7 +75,7 @@ struct json_object* json_object_from_file(char *filename)
     mc_abort("json_object_from_file: error reading file %s: %s\n",
 	     filename, strerror(errno));
     printbuf_free(pb);
-    return error_ptr(-1);
+    return (struct json_object*)error_ptr(-1);
   }
   obj = json_tokener_parse(pb->buf);
   printbuf_free(pb);
@@ -99,7 +99,7 @@ int json_object_to_file(char *filename, struct json_object *obj)
     return -1;
   }
 
-  if(!(json_str = json_object_to_json_string(obj))) { return -1; }
+  if(!(json_str = (char *)json_object_to_json_string(obj))) { return -1; }
 
 
   wsize = (unsigned int)(strlen(json_str) & UINT_MAX); /* CAW: probably unnecessary, but the most 64bit safe */

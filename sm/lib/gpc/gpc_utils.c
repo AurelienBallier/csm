@@ -1,5 +1,6 @@
 #include "gpc.h"
 #include "gpc_utils.h"
+#include "../../csm/restrict.h"
 
 void m_trans(const gsl_matrix*A, gsl_matrix*A_t){
 	gsl_matrix_transpose_memcpy(A_t,A);
@@ -59,7 +60,7 @@ double m_dot(const gsl_matrix*A,const gsl_matrix*B) {
 }
 
 int poly_real_roots(unsigned int n, const double*a, double *roots) {
-	double z[(n-1)*2];
+    DYNAMIC_ALLOCATE(double, z, (n-1)*2);
 	gsl_poly_complex_workspace * w  = gsl_poly_complex_workspace_alloc(n);
 	if(GSL_SUCCESS != gsl_poly_complex_solve (a, n, w, z)) {
 		return 0;
@@ -70,12 +71,15 @@ int poly_real_roots(unsigned int n, const double*a, double *roots) {
 	for(i=0;i<n-1;i++) {
 		roots[i] = z[2*i];
 	}	
+
+    CLEAN_MEMORY(z);
+
 	return 1;
 }
 
 
 int poly_greatest_real_root(unsigned int n, const double*a, double *root) {
-	double z[(n-1)*2];
+    DYNAMIC_ALLOCATE(double, z, (n-1)*2);
 	gsl_poly_complex_workspace * w  = gsl_poly_complex_workspace_alloc(n);
 	if(GSL_SUCCESS != gsl_poly_complex_solve (a, n, w, z)) {
 		return 0;
@@ -118,6 +122,9 @@ int poly_greatest_real_root(unsigned int n, const double*a, double *root) {
 	}
 	
 	*root = lambda;
+
+    CLEAN_MEMORY(z);
+
 	return 1;
 }
 

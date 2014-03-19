@@ -10,7 +10,7 @@ int* alloc_int_array(int n, int def);
 /* -------------------------------------------------- */
 
 LDP ld_alloc_new(int nrays) {
-	LDP ld = malloc(sizeof(struct laser_data));
+	LDP ld = (struct laser_data*)malloc(sizeof(struct laser_data));
 	ld_alloc(ld, nrays);
 	return ld;
 }

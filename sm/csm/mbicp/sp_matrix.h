@@ -8,12 +8,10 @@
   Implements basic MATRIX operations
 */
 
+#include "../restrict.h"
+
 #ifndef _SP_MATRIX_H
 #define _SP_MATRIX_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define MAX_ROWS (7)
 #define MAX_COLS (7)
@@ -56,21 +54,17 @@ typedef struct {
 
 #define SQUARE(x)            ((x)*(x))
 
-MATRIX create_matrix (int rows, int cols);
-void initialize_matrix (MATRIX *m, int rows, int cols);
-void diagonal_matrix (MATRIX *m, int dim, float el1, float el2, float el3);
-void print_matrix (char *message, MATRIX const *m);
-VECTOR create_vector (int elements);
-void initialize_vector (VECTOR *v, int elements);
-void print_vector (char *message, VECTOR const *v);
-float cross_product (MATRIX const *m, int f1, int c1, int f2, int c2);
-int determinant (MATRIX const *m, float *result);
-int inverse_matrix (MATRIX const *m, MATRIX *n);
-int multiply_matrix_vector (MATRIX const *m, VECTOR const *v, VECTOR *r);
-
-#ifdef __cplusplus
-}
-#endif
+CSM_LIB_DECL MATRIX create_matrix (int rows, int cols);
+CSM_LIB_DECL void initialize_matrix (MATRIX *m, int rows, int cols);
+CSM_LIB_DECL void diagonal_matrix (MATRIX *m, int dim, float el1, float el2, float el3);
+CSM_LIB_DECL void print_matrix (char *message, MATRIX const *m);
+CSM_LIB_DECL VECTOR create_vector (int elements);
+CSM_LIB_DECL void initialize_vector (VECTOR *v, int elements);
+CSM_LIB_DECL void print_vector (char *message, VECTOR const *v);
+CSM_LIB_DECL float cross_product (MATRIX const *m, int f1, int c1, int f2, int c2);
+CSM_LIB_DECL int determinant (MATRIX const *m, float *result);
+CSM_LIB_DECL int inverse_matrix (MATRIX const *m, MATRIX *n);
+CSM_LIB_DECL int multiply_matrix_vector (MATRIX const *m, VECTOR const *v, VECTOR *r);
 
 #endif
 

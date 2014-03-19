@@ -5,14 +5,6 @@
 #include "MbICP2.h"
 #include "TData.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void heapsort(TAsoc a[], int n);
-
-#ifdef __cplusplus
-}
-#endif
+CSM_LIB_DECL void heapsort(TAsoc a[], int n);
 
 #endif

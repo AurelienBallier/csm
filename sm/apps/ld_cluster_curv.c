@@ -167,8 +167,8 @@ void ld_cluster_curv(LDP ld) {
 	
 	double filter[10] = {.5, .4, .3, .2, .2, .2, .2, .2, .2, .2};
 	double deriv_filter[7] = {0, .6, .3, .2, .2, .2, .1};
-	double smooth_alpha[n];
-	double deriv_alpha[n];
+    DYNAMIC_ALLOCATE(double, smooth_alpha, n);
+    DYNAMIC_ALLOCATE(double, deriv_alpha, n);
 
 	int p;
 	if(JJ) jj_loop_enter("it");
@@ -217,6 +217,9 @@ void ld_cluster_curv(LDP ld) {
 	if(JJ) jj_loop_exit();
 
 	if(JJ) jj_context_exit();
+
+    CLEAN_MEMORY(deriv_alpha);
+    CLEAN_MEMORY(smooth_alpha);
 }
 
 

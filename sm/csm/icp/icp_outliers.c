@@ -8,7 +8,7 @@ double hoare_selection(double *data, int start, int end, int k);
 /** expects cartesian valid */
 void visibilityTest(LDP laser_ref, const gsl_vector*u) {
 
-	double theta_from_u[laser_ref->nrays];
+    DYNAMIC_ALLOCATE(double, theta_from_u, laser_ref->nrays);
 	
 	int j;
 	for(j=0;j<laser_ref->nrays;j++) {
@@ -29,6 +29,8 @@ void visibilityTest(LDP laser_ref, const gsl_vector*u) {
 		}
 	}
 	sm_debug("\n");
+
+    CLEAN_MEMORY(theta_from_u);
 }
 
 
@@ -44,9 +46,9 @@ void kill_outliers_double(struct sm_params*params) {
 
 	LDP laser_ref  = params->laser_ref;
 	LDP laser_sens = params->laser_sens;
-
-	double dist2_i[laser_sens->nrays];
-	double dist2_j[laser_ref->nrays];
+    
+    DYNAMIC_ALLOCATE(double, dist2_i, laser_sens->nrays);
+    DYNAMIC_ALLOCATE(double, dist2_j, laser_ref->nrays);
 	int j; for(j=0;j<laser_ref->nrays;j++) 
 		dist2_j[j]= 1000000;
 	
@@ -68,6 +70,9 @@ void kill_outliers_double(struct sm_params*params) {
 		}
 	}
 	sm_debug("\tkill_outliers_double: killed %d correspondences\n",nkilled);
+
+    CLEAN_MEMORY(dist2_i);
+    CLEAN_MEMORY(dist2_j);
 }
 	
 /** 
@@ -89,10 +94,10 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 	
 	/* dist2, indexed by k, contains the error for the k-th correspondence */
 	int k = 0; 
-	double dist2[laser_sens->nrays];
+    DYNAMIC_ALLOCATE(double, dist2, laser_sens->nrays);
 		
 	int i;
-	double dist[laser_sens->nrays];
+    DYNAMIC_ALLOCATE(double, dist, laser_sens->nrays);
 	/* for each point in laser_sens */
 	for(i=0;i<laser_sens->nrays;i++) {
 		/* which has a valid correspondence */
@@ -113,9 +118,7 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 	if(JJ) jj_add_double_array("dist_points", dist2, laser_sens->nrays);
 	if(JJ) jj_add_double_array("dist_corr_unsorted", dist2, k);
 
-#if 0	
-	double dist2_copy[k]; for(i=0;i<k;i++) dist2_copy[i] = dist2[i];
-#endif 
+    //DYNAMIC_ALLOCATE(double, dist2_copy, k); for(i=0;i<k;i++) dist2_copy[i] = dist2[i];
 
 	/* two errors limits are defined: */
 		/* In any case, we don't want more than outliers_maxPerc% */
@@ -136,14 +139,12 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 	
 	double error_limit = GSL_MIN(error_limit1, error_limit2);
 	
-#if 0
-	double error_limit1_ho = hoare_selection(dist2_copy, 0, k-1, order);
+	/*double error_limit1_ho = hoare_selection(dist2_copy, 0, k-1, order);
 	double error_limit2_ho = error_limit2;
 	if((error_limit1_ho != error_limit1) || (error_limit2_ho != error_limit2)) {
 		printf("%f == %f    %f  == %f\n",
 			error_limit1_ho, error_limit1, error_limit2_ho, error_limit2);
-	}
-#endif
+	}*/
 
 	if(JJ) jj_add_double_array("dist_corr_sorted", dist2, k);
 	if(JJ) jj_add_double("error_limit_max_perc", error_limit1);
@@ -175,6 +176,9 @@ void kill_outliers_trim(struct sm_params*params,  double*total_error) {
 	if(JJ) jj_add_double("mean_error", *total_error / nvalid);
 		
 	if(JJ) jj_context_exit();
+
+    CLEAN_MEMORY(dist);
+    CLEAN_MEMORY(dist2);
 }
 
 

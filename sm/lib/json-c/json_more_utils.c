@@ -56,7 +56,7 @@ JO json_read_stream(FILE*f) {
 	while(1) {
 		if( ((size_t)count) > buf_size - 2) {
 			buf_size *= 2;
-			char * new_buf = realloc(buf, buf_size);
+			char * new_buf = (char *)realloc(buf, buf_size);
 			if(!new_buf) {
 				mc_error("Having read %d bytes, cannot allocate a block of size %d.",
 					count, buf_size);
@@ -105,7 +105,7 @@ struct json_object* json_tokener_parse_len(const char *str, int len) {
   tok = json_tokener_new();
   obj = json_tokener_parse_ex(tok, str, len);
   if(tok->err != json_tokener_success) {
-    obj = error_ptr(-tok->err);
+    obj = (struct json_object*)error_ptr(-tok->err);
     json_tokener_free(tok);
 	mc_error("Malformed JSON object: \n'%.*s'\n", len, str);
 	 return 0;

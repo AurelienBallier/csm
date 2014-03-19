@@ -1,6 +1,9 @@
 #include <time.h>
 #include <string.h>
+
+#ifndef _MSC_VER
 #include <libgen.h>
+#endif
 
 #include <options/options.h>
 #include "../csm/csm_all.h"

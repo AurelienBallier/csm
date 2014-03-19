@@ -7,9 +7,7 @@ $Id: TData.h 4129 2007-08-21 23:16:24Z gerkey $
 #ifndef TData
 #define TData
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "../restrict.h"
 
 /* 
    Este fichero contiene los tipos de datos utilizados por todos 
@@ -60,9 +58,5 @@ typedef struct{
   int index;							// Index within the original scan
   int L,R;
 }TAsoc;
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

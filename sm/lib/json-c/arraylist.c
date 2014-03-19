@@ -26,68 +26,68 @@
 struct array_list*
 array_list_new(array_list_free_fn *free_fn)
 {
-  struct array_list *this;
+  struct array_list *self;
 
-  if(!(this = calloc(1, sizeof(struct array_list)))) return NULL;
-  this->size = ARRAY_LIST_DEFAULT_SIZE;
-  this->length = 0;
-  this->free_fn = free_fn;
-  if(!(this->array = calloc(sizeof(void*), (size_t) this->size))) {
-    free(this);
+  if(!(self = (struct array_list *)calloc(1, sizeof(struct array_list)))) return NULL;
+  self->size = ARRAY_LIST_DEFAULT_SIZE;
+  self->length = 0;
+  self->free_fn = free_fn;
+  if(!(self->array = (void **)calloc(sizeof(void*), (size_t) self->size))) {
+    free(self);
     return NULL;
   }
-  return this;
+  return self;
 }
 
 extern void
-array_list_free(struct array_list *this)
+array_list_free(struct array_list *self)
 {
   int i;
-  for(i = 0; i < this->length; i++)
-    if(this->array[i]) this->free_fn(this->array[i]);
-  free(this->array);
-  free(this);
+  for(i = 0; i < self->length; i++)
+    if(self->array[i]) self->free_fn(self->array[i]);
+  free(self->array);
+  free(self);
 }
 
 void*
-array_list_get_idx(struct array_list *this, int i)
+array_list_get_idx(struct array_list *self, int i)
 {
-  if(i >= this->length) return NULL;
-  return this->array[i];
+  if(i >= self->length) return NULL;
+  return self->array[i];
 }
 
-static int array_list_expand_internal(struct array_list *this, int max)
+static int array_list_expand_internal(struct array_list *self, int max)
 {
   void *t;
   int new_size;
 
-  if(max < this->size) return 0;
-  new_size = max(this->size << 1, max);
-  if(!(t = realloc(this->array, new_size*sizeof(void*)))) return -1;
-  this->array = t;
-  (void)memset(this->array + this->size, 0, (new_size-this->size)*sizeof(void*));
-  this->size = new_size;
+  if(max < self->size) return 0;
+  new_size = max(self->size << 1, max);
+  if(!(t = realloc(self->array, new_size*sizeof(void*)))) return -1;
+  self->array = (void **)t;
+  (void)memset(self->array + self->size, 0, (new_size-self->size)*sizeof(void*));
+  self->size = new_size;
   return 0;
 }
 
 int
-array_list_put_idx(struct array_list *this, int idx, void *data)
+array_list_put_idx(struct array_list *self, int idx, void *data)
 {
-  if(array_list_expand_internal(this, idx)) return -1;
-  if(this->array[idx]) this->free_fn(this->array[idx]);
-  this->array[idx] = data;
-  if(this->length <= idx) this->length = idx + 1;
+  if(array_list_expand_internal(self, idx)) return -1;
+  if(self->array[idx]) self->free_fn(self->array[idx]);
+  self->array[idx] = data;
+  if(self->length <= idx) self->length = idx + 1;
   return 0;
 }
 
 int
-array_list_add(struct array_list *this, void *data)
+array_list_add(struct array_list *self, void *data)
 {
-  return array_list_put_idx(this, this->length, data);
+  return array_list_put_idx(self, self->length, data);
 }
 
 int
-array_list_length(struct array_list *this)
+array_list_length(struct array_list *self)
 {
-  return this->length;
+  return self->length;
 }

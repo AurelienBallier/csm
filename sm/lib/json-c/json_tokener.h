@@ -77,13 +77,13 @@ struct json_tokener
   struct json_tokener_srec stack[JSON_TOKENER_MAX_DEPTH];
 };
 
-extern const char* json_tokener_errors[];
+CSM_LIB_DECL const char* json_tokener_errors[];
 
-extern struct json_tokener* json_tokener_new(void);
-extern void json_tokener_free(struct json_tokener *tok);
-extern void json_tokener_reset(struct json_tokener *tok);
-extern struct json_object* json_tokener_parse(const char *str);
-extern struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
+CSM_LIB_DECL struct json_tokener* json_tokener_new(void);
+CSM_LIB_DECL void json_tokener_free(struct json_tokener *tok);
+CSM_LIB_DECL void json_tokener_reset(struct json_tokener *tok);
+CSM_LIB_DECL struct json_object* json_tokener_parse(const char *str);
+CSM_LIB_DECL struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
 						 const char *str, int len);
 
 #endif

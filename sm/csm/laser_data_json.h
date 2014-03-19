@@ -12,21 +12,21 @@
 
 /* Laserdata to/from json */
 
-JO ld_to_json(LDP);
-LDP json_to_ld(JO);
+CSM_LIB_DECL JO ld_to_json(LDP);
+CSM_LIB_DECL LDP json_to_ld(JO);
 
-JO corr_to_json(struct correspondence*, int n);
-int json_to_corr(JO jo, struct correspondence*, int n);
+CSM_LIB_DECL JO corr_to_json(struct correspondence*, int n);
+CSM_LIB_DECL int json_to_corr(JO jo, struct correspondence*, int n);
 
-LDP ld_from_json_stream(FILE*);
-LDP ld_from_json_string(const char*s);
-void ld_write_as_json(LDP ld, FILE * stream);
+CSM_LIB_DECL LDP ld_from_json_stream(FILE*);
+CSM_LIB_DECL LDP ld_from_json_string(const char*s);
+CSM_LIB_DECL void ld_write_as_json(LDP ld, FILE * stream);
 
 
 /* Other stuff to/from json */
 
-JO matrix_to_json(gsl_matrix*m);
-JO vector_to_json(gsl_vector*v);
-JO result_to_json(struct sm_params*p, struct sm_result *r);
+CSM_LIB_DECL JO matrix_to_json(gsl_matrix*m);
+CSM_LIB_DECL JO vector_to_json(gsl_vector*v);
+CSM_LIB_DECL JO result_to_json(struct sm_params*p, struct sm_result *r);
 
 #endif

@@ -224,7 +224,11 @@ void find_correspondences_tricks(struct sm_params*params) {
 		laser_sens->corr[i].j2 = j2;
 		laser_sens->corr[i].dist2_j1 = best_dist;
 		laser_sens->corr[i].type = 
+#ifdef __cplusplus
+			params->use_point_to_line_distance ? correspondence::corr_pl : correspondence::corr_pp;
+#else
 			params->use_point_to_line_distance ? corr_pl : corr_pp;
+#endif
 		
 	}
 }

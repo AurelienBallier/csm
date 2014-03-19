@@ -1,5 +1,7 @@
 #include <string.h>
+#ifndef _WIN32
 #include <strings.h>
+#endif
 #include "laser_data_drawing.h"
 #include "logging.h"
 #include "math_utils.h"

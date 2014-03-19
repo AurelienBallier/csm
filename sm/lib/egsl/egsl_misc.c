@@ -1,5 +1,6 @@
 #include <math.h>
 #include "egsl.h"
+#include "../../csm/restrict.h"
 
 val egsl_rot(double theta) {
 	double R[2*2] = {
@@ -32,7 +33,8 @@ void egsl_print_spectrum(const char*s, val v) {
 	gsl_matrix *m = egsl_gslm(v);
 	/* expect same size */
 	size_t n = m->size1;
-	double eval[n]; val evec[n];
+    DYNAMIC_ALLOCATE(double, eval, n);
+    DYNAMIC_ALLOCATE(val, evec, n);
 	egsl_symm_eig(v, eval, evec);
  	size_t i,j;
 	for(j=0;j<n;j++) {
@@ -41,5 +43,8 @@ void egsl_print_spectrum(const char*s, val v) {
 		for(i=0;i<n;i++) 
 			fprintf(stderr, "%+4.4f ", egsl_atv(evec[j],i));
 		fprintf(stderr, " sqrt(eval[%d])=%5.5f  \n", (int)j, sqrt(eval[j]));
-	}		
+	}	
+
+    CLEAN_MEMORY(evec);
+    CLEAN_MEMORY(eval);
 }

@@ -23,55 +23,55 @@ typedef struct json_object* JO;
 
 /** Reads a JSON object from stream.
     Returns 0 on error. XXX: does not support unicode. */
-JO json_read_stream(FILE*);
+CSM_LIB_DECL JO json_read_stream(FILE*);
 
 /** Skips one object from stream (without parsing it).
     Returns 0 on error. XXX: does not support unicode. */
-int json_stream_skip(FILE*);
+CSM_LIB_DECL int json_stream_skip(FILE*);
 
 /** Return true if there is a field */
-int jo_has_field(JO s, const char*name);
+CSM_LIB_DECL int jo_has_field(JO s, const char*name);
 
-JO jo_new_double_array(const double *v, int n);
-JO jo_new_int_array   (const int    *v, int n);
+CSM_LIB_DECL JO jo_new_double_array(const double *v, int n);
+CSM_LIB_DECL JO jo_new_int_array   (const int    *v, int n);
 
-void jo_add_double       (JO parent, const char*name, double v);
-void jo_add_int          (JO parent, const char*name, int    v);
-void jo_add_double_array (JO parent, const char*name, const double *v, int n);
-void jo_add_int_array    (JO parent, const char*name, const int    *v, int n);
+CSM_LIB_DECL void jo_add_double       (JO parent, const char*name, double v);
+CSM_LIB_DECL void jo_add_int          (JO parent, const char*name, int    v);
+CSM_LIB_DECL void jo_add_double_array (JO parent, const char*name, const double *v, int n);
+CSM_LIB_DECL void jo_add_int_array    (JO parent, const char*name, const int    *v, int n);
 
-void jo_add_string       (JO parent, const char*name, const char*v);
+CSM_LIB_DECL void jo_add_string       (JO parent, const char*name, const char*v);
 
 /** Return 0 if there isn't a field called 'name' */
-int jo_read_int          (JO parent, const char*name, int*p) ;
+CSM_LIB_DECL int jo_read_int          (JO parent, const char*name, int*p) ;
 /** This also tolerates an integer */
-int jo_read_double       (JO parent, const char*name, double*p);
+CSM_LIB_DECL int jo_read_double       (JO parent, const char*name, double*p);
 
 /* Returns 0 if there isn't a field called "name", or it's not an array, or 
 its length is not at least "n". Else, it returns 1. */
-int jo_read_double_array (JO parent, const char*name, double *p, int n, double when_null);
-int jo_read_int_array    (JO parent, const char*name, int    *p, int n, int    when_null);
-int jo_read_string       (JO parent, const char*name, char*v, size_t max_len);
+CSM_LIB_DECL int jo_read_double_array (JO parent, const char*name, double *p, int n, double when_null);
+CSM_LIB_DECL int jo_read_int_array    (JO parent, const char*name, int    *p, int n, int    when_null);
+CSM_LIB_DECL int jo_read_string       (JO parent, const char*name, char*v, size_t max_len);
 
 
 /* Returns 0 if jo is not a double array, or its length is not n */
-int jo_read_from_double_array (JO array, double *p, int n, double when_null);
+CSM_LIB_DECL int jo_read_from_double_array (JO array, double *p, int n, double when_null);
 
 
-int json_to_int(JO jo, int*ptr);
+CSM_LIB_DECL int json_to_int(JO jo, int*ptr);
 
 /** Converts an integer or a double to a double, 
     or else *ptr will be set to NAN. */
-int json_to_double(JO jo, double*ptr);
+CSM_LIB_DECL int json_to_double(JO jo, double*ptr);
 
 	
 /* returns 0 if NAN */
-JO jo_double_or_null(double d);
+CSM_LIB_DECL JO jo_double_or_null(double d);
 
 /*JO find_object_with_name(JO root, const char*name);*/
-JO json_tokener_parse_len(const char *str, int len);
-JO json_parse(const char*str);
-const char* json_write(JO jo);
+CSM_LIB_DECL JO json_tokener_parse_len(const char *str, int len);
+CSM_LIB_DECL JO json_parse(const char*str);
+CSM_LIB_DECL const char* json_write(JO jo);
 #define jo_to_string json_write
 
 #endif

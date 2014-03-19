@@ -55,9 +55,11 @@ MESSAGE(STATUS "csm_link_flags = ${csm_link_flags}")
 
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${csm_c_flags}")
+
+if(NOT MSVC)
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ggdb -Wall")
-
+endif(NOT MSVC)
 
 # for realpath
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
@@ -80,7 +82,13 @@ SUBDIRS(csm)
 
 MACRO(new_executable exec)
 	ADD_EXECUTABLE(${exec} apps/${exec}.c)
-	TARGET_LINK_LIBRARIES(${exec} csm-static ${csm_link_flags})
+
+    if(MSVC)
+        SET_SOURCE_FILES_PROPERTIES(apps/${exec}.c PROPERTIES LANGUAGE CXX)
+    endif(MSVC)
+
+	#TARGET_LINK_LIBRARIES(${exec} csm-static ${csm_link_flags})
+    TARGET_LINK_LIBRARIES(${exec} csm ${csm_link_flags})
 	INSTALL(PROGRAMS ${exec} DESTINATION bin)
 ENDMACRO(new_executable exec)
 
@@ -127,15 +135,22 @@ IF(CAIRO_FOUND)
 	new_executable(log2pdf)
 ENDIF(CAIRO_FOUND)
 
+SET(test_math_utils_sanity_SRC csm/test_math_utils_sanity.c)
 
-ADD_EXECUTABLE(test_math_utils_sanity csm/test_math_utils_sanity.c)
+ADD_EXECUTABLE(test_math_utils_sanity ${test_math_utils_sanity_SRC})
+if(MSVC)
+SET_SOURCE_FILES_PROPERTIES(${test_math_utils_sanity_SRC} PROPERTIES LANGUAGE CXX)
+TARGET_LINK_LIBRARIES(test_math_utils_sanity csm)
+else(MSVC)
 TARGET_LINK_LIBRARIES(test_math_utils_sanity csm-static ${GSL_LIBRARIES})
+endif(MSVC)
 
 ENABLE_TESTING()
 ADD_TEST(test_math_utils_sanity test_math_utils_sanity)
 
 
 SET(csm_sources 
+./csm/restrict.c
 ./csm/clustering.c
 ./csm/gpm/gpm.c
 ./csm/icp/icp.c
@@ -185,6 +200,14 @@ SET(csm_sources
 ./lib/options/options_interface.c
 )
 
+if(MSVC)
+SET_SOURCE_FILES_PROPERTIES(${csm_sources} PROPERTIES LANGUAGE CXX)
+SET(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${csm_c_flags} /MD /D _CRT_SECURE_NO_WARNINGS")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:library")
+#LINK_DIRECTORIES("c:/opt/ros/groovy/x86/lib")
+#SET(csm_link_flags cblas gsl)
+endif(MSVC)
+
 IF(CAIRO_FOUND)
 SET(csm_sources ${csm_sources} csm/laser_data_cairo.c)
 ENDIF(CAIRO_FOUND)
@@ -194,6 +217,7 @@ TARGET_LINK_LIBRARIES(csm-static ${csm_link_flags})
 INSTALL(TARGETS csm-static ARCHIVE DESTINATION lib)
 
 ADD_LIBRARY(csm SHARED ${csm_sources})
+MESSAGE("Link flasgs: ${csm_link_flags}")
 TARGET_LINK_LIBRARIES(csm ${csm_link_flags})
 INSTALL(TARGETS csm ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 
@@ -215,7 +239,9 @@ SUBDIRS(pkg-config)
 
 if(0)
 #
+if(NOT MSVC)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${csm_c_flags} -Wall")
+endif(NOT MSVC)
 
 FILE(GLOB_RECURSE csm_headers csm/*.h)
 FILE(GLOB_RECURSE lib_headers lib/*.h)

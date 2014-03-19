@@ -15,11 +15,44 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
+#ifndef _WIN32
 #include <sys/param.h>
-#include <ctype.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <libgen.h>
+#else
+#define PATH_MAX 4096
+#include <windows.h>
+#include <tchar.h>
+#include "../../csm/restrict.h"
+
+#define MAX(x, y) (x<y)?x:y
+
+char* realpath(char* file, char* buffer){
+    TCHAR** lppPart = {NULL};
+    TCHAR buf[PATH_MAX];
+    DWORD retval = 0;
+
+    retval = GetFullPathName(file, PATH_MAX, buf, lppPart);
+    strcpy_s(buffer, PATH_MAX, buf);
+
+    return (char *)retval;
+}
+
+char* dirname(char* file){
+    char drive[4], dir[PATH_MAX-4];
+
+    _splitpath_s(file, drive, 4, dir, PATH_MAX-4, NULL, 0, NULL, 0);
+
+    char* path = new char[PATH_MAX];
+    strcpy_s(path, PATH_MAX, drive);
+    strcat_s(path, PATH_MAX, dir);
+
+    return path;
+}
+
+#endif
+#include <ctype.h>
+#include <sys/stat.h>
 #include <string.h>
 
 #include "options.h"
@@ -304,7 +337,7 @@ int options_set(struct option*o, const char*value) {
 const char*options_value_as_string(struct option*o);
 
 void display_table(FILE*f,  char**table, int rows, int columns, int padding) {
-	int col_size[columns];
+    DYNAMIC_ALLOCATE(int, col_size, columns);
 	
 	int i,j;
 	for(j=0;j<columns;j++)  {
@@ -327,13 +360,15 @@ void display_table(FILE*f,  char**table, int rows, int columns, int padding) {
 		}
 		fprintf(f, "\n");
 	}
+
+    CLEAN_MEMORY(col_size);
 }
 
 void options_dump(struct option * options, FILE*f, int write_desc) {
 	int n; for (n=0;options_valid(options+n);n++);
 
 	int nrows = n + 2;
-	char**table = malloc(sizeof(char*)*nrows*3);
+	char**table = (char **)malloc(sizeof(char*)*nrows*3);
 
 	int row = 0;
 	if(write_desc) {

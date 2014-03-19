@@ -158,15 +158,14 @@ struct sm_result {
 };
 
 
-void sm_icp(struct sm_params*input, struct sm_result*output);
-void sm_gpm(struct sm_params*input, struct sm_result*output);
-void sm_hsm(struct sm_params*input, struct sm_result*output);
+CSM_LIB_DECL void sm_icp(struct sm_params*input, struct sm_result*output);
+CSM_LIB_DECL void sm_gpm(struct sm_params*input, struct sm_result*output);
+CSM_LIB_DECL void sm_hsm(struct sm_params*input, struct sm_result*output);
+CSM_LIB_DECL void sm_options(struct sm_params*p, struct option*ops);
 
 /* Unfinished, untested :-/ */
-void sm_mbcip(struct sm_params*input, struct sm_result*output);
+CSM_LIB_DECL void sm_mbcip(struct sm_params*input, struct sm_result*output);
 
-
-
-void sm_journal_open(const char* file);
+CSM_LIB_DECL void sm_journal_open(const char* file);
 
 #endif

@@ -1,4 +1,6 @@
+#ifndef _MSC_VER
 #include <libgen.h>
+#endif
 #include <math.h>
 
 #include <options/options.h>

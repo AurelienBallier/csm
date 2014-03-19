@@ -51,7 +51,11 @@ int json_to_corr(JO array, struct correspondence*corr, int n) {
 			jo_read_int(element, "j2", &(corr[i].j2));
 			int type;
 			jo_read_int(element, "type", &(type));
+#ifdef __cplusplus
+			corr[i].type = (correspondence::Type)(type);
+#else
 			corr[i].type = type;
+#endif
 		}
 	}
 	return 1;

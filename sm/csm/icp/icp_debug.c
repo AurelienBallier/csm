@@ -5,7 +5,7 @@ void debug_correspondences(struct sm_params * params) {
 	LDP laser_sens = params->laser_sens;
 	/** Do the test */
 	find_correspondences_tricks(params);
-	struct correspondence c1[laser_sens->nrays];
+    DYNAMIC_ALLOCATE(struct correspondence, c1, laser_sens->nrays);
 	struct correspondence * c2 = laser_sens->corr;
 	memcpy(c1, c2, sizeof(struct correspondence) * laser_sens->nrays);
 	long hash1 = ld_corr_hash(laser_sens);
@@ -24,4 +24,6 @@ void debug_correspondences(struct sm_params * params) {
 		}
 		if(1) exit(-1);
 	}
+
+    CLEAN_MEMORY(c1);
 }
