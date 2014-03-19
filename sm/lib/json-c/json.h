@@ -12,9 +12,7 @@
 #ifndef _json_h_
 #define _json_h_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "csm/restrict.h"
 
 #include "bits.h"
 #include "debug.h"
@@ -24,9 +22,5 @@ extern "C" {
 #include "json_object.h"
 #include "json_tokener.h"
 #include "json_more_utils.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -12,7 +12,7 @@
 #ifndef _DEBUG_H_
 #define _DEBUG_H_
 
-#include "../../csm/restrict.h"
+#include "csm/restrict.h"
 
 CSM_LIB_DECL void mc_set_debug(int debug);
 CSM_LIB_DECL int mc_get_debug(void);

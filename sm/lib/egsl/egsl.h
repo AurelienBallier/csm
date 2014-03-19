@@ -4,7 +4,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 
-#include "../../csm/restrict.h"
+#include "csm/restrict.h"
 
 struct egsl_val {
 	gsl_matrix * gslm;

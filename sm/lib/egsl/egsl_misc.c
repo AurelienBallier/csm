@@ -1,6 +1,5 @@
 #include <math.h>
 #include "egsl.h"
-#include "../../csm/restrict.h"
 
 val egsl_rot(double theta) {
 	double R[2*2] = {

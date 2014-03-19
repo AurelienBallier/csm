@@ -12,8 +12,6 @@
 #ifndef _json_object_h_
 #define _json_object_h_
 
-#include "../../csm/restrict.h"
-
 #define JSON_OBJECT_DEF_HASH_ENTIRES 16
 
 #undef FALSE

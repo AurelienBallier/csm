@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "../../csm/restrict.h"
+#include "csm/restrict.h"
 
 /** User-friendly interface */
 /* Sets the banner for the help message. (pointer is kept) */

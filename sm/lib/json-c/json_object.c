@@ -23,8 +23,6 @@
 #include <string.h>
 #ifndef _WIN32
 #include <strings.h>
-#else
-#include "../../csm/restrict.h"
 #endif
 
 #include "debug.h"

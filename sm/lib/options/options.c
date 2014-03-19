@@ -23,7 +23,6 @@
 #define PATH_MAX 4096
 #include <windows.h>
 #include <tchar.h>
-#include "../../csm/restrict.h"
 
 #define MAX(x, y) (x<y)?x:y
 

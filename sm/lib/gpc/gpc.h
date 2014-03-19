@@ -20,6 +20,8 @@
 #ifndef H_GENERAL_POINT_CORRESPONDENCE
 #define H_GENERAL_POINT_CORRESPONDENCE
 
+#include "csm/restrict.h"
+
 struct gpc_corr {
 	double p[2];
 	double q[2];

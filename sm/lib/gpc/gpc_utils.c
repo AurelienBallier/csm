@@ -1,6 +1,5 @@
 #include "gpc.h"
 #include "gpc_utils.h"
-#include "../../csm/restrict.h"
 
 void m_trans(const gsl_matrix*A, gsl_matrix*A_t){
 	gsl_matrix_transpose_memcpy(A_t,A);

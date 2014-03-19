@@ -17,8 +17,6 @@
 #include <string.h>
 #ifndef _WIN32
 #include <strings.h>
-#else
-#include "../../csm/restrict.h"
 #endif
 
 #include "bits.h"
