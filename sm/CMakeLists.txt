@@ -89,7 +89,7 @@ MACRO(new_executable exec)
 
 	#TARGET_LINK_LIBRARIES(${exec} csm-static ${csm_link_flags})
     TARGET_LINK_LIBRARIES(${exec} csm ${csm_link_flags})
-	INSTALL(PROGRAMS ${exec} DESTINATION bin)
+	INSTALL(TARGETS ${exec} DESTINATION bin)
 ENDMACRO(new_executable exec)
 
 # new_executable(sm0)
@@ -230,7 +230,7 @@ LINK_DIRECTORIES(/sw/lib)
 ADD_EXECUTABLE(hsm_test00 ./csm/hsm/hsm_test00.c ./csm/hsm/hsm.c)
 #TARGET_LINK_LIBRARIES(hsm_test00 csm-static ${csm_link_flags} pgm pnm pbm)
 	TARGET_LINK_LIBRARIES(hsm_test00 csm-static ${csm_link_flags} netpbm)
-INSTALL(PROGRAMS hsm_test00 DESTINATION bin)
+INSTALL(TARGETS hsm_test00 DESTINATION bin)
 
 ENDIF(COMPILE_HSM)
 
